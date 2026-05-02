@@ -28,7 +28,9 @@
             "@commands": ["src/commands/index.ts"],
             "@schemas": ["src/schemas/index.ts"],
             "@types": ["src/types/index.ts"],
-            "@utils": ["src/utils/index.ts"]
+            "@utils": ["src/utils/index.ts"],
+            "@constants": ["src/constants/index.ts"],
+            "@state": ["src/state/index.ts"]
         }
     }
 }
