@@ -1,5 +1,5 @@
 import { Utils } from '@utils';
-import { AuthCmd } from '@commands';
+import { AuthCmd, SnippetCmd } from '@commands';
 import { State } from '@state';
 
 export async function start() {
@@ -20,6 +20,14 @@ export async function start() {
 
             case 'logout':
                 await AuthCmd.logout();
+                break;
+
+            case 'touch':
+                await SnippetCmd.create();
+                break;
+
+            case 'view':
+                await SnippetCmd.getByAlias();
                 break;
 
             case 'quit':
