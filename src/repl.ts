@@ -34,6 +34,10 @@ export async function start() {
                 await SnippetCmd.getAll();
                 break;
 
+            case 'rm':
+                await SnippetCmd.delete();
+                break;
+
             case 'quit':
             case 'exit':
                 process.exit(0);

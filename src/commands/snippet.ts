@@ -101,4 +101,31 @@ export class SnippetCmd {
             console.log(`${num}. ${row.title.padEnd(30)} ${row.alias}`);
         });
     }
+
+    public static async delete() {
+        if (!State.isAuthenticated()) {
+            console.error('You are not authenticated');
+            return;
+        }
+
+        const alias = await Utils.getInput('Enter alias: ');
+
+        const validation = Utils.verifySchema({ alias }, aliasSchema);
+        if (!validation.success) {
+            console.error('Validation failed:', validation.errors);
+            return;
+        }
+
+        const { error } = await ApiService.fetch(`snippets/${alias}`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${State.getPat()}` },
+        });
+
+        if (error) {
+            console.error('Falied to delete snippet:', error.message);
+            return;
+        }
+
+        console.log('Snippet deleted successfully');
+    }
 }
