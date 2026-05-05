@@ -30,6 +30,10 @@ export async function start() {
                 await SnippetCmd.getByAlias();
                 break;
 
+            case 'ls':
+                await SnippetCmd.getAll();
+                break;
+
             case 'quit':
             case 'exit':
                 process.exit(0);

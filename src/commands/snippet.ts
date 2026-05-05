@@ -2,6 +2,11 @@ import { aliasSchema, createSnippet } from '@schemas';
 import { State } from '@state';
 import { ApiService, Utils } from '@utils';
 
+type Snippet = {
+    title: string;
+    alias: string;
+};
+
 export class SnippetCmd {
     public static async create() {
         if (!State.isAuthenticated()) {
@@ -64,5 +69,36 @@ export class SnippetCmd {
         }
 
         console.log(data.content);
+    }
+
+    public static async getAll(
+        options: { page: number; limit: number } = { page: 1, limit: 10 }
+    ) {
+        if (!State.isAuthenticated()) {
+            console.error('You are not authenticated');
+            return;
+        }
+
+        const { data, error } = await ApiService.fetch<{ snippets: Snippet[] }>(
+            `snippets?page=${options.page}&limit=${options.limit}`,
+            {
+                headers: { Authorization: `Bearer ${State.getPat()}` },
+            }
+        );
+
+        if (error) {
+            console.error('Falied to fetch snippets:', error.message);
+            return;
+        }
+
+        if (data.snippets.length === 0) {
+            console.log('No snippet found');
+            return;
+        }
+
+        data.snippets.forEach((row, idx) => {
+            const num = String(idx + 1).padStart(2, ' ');
+            console.log(`${num}. ${row.title.padEnd(30)} ${row.alias}`);
+        });
     }
 }
