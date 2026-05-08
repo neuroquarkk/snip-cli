@@ -16,7 +16,7 @@ export class SnippetCmd {
 
         const title = await Utils.getInput('Enter title: ');
         const alias = await Utils.getInput('Enter alias: ');
-        const content = await Utils.getInput('Enter content: ');
+        const content = await Utils.getMultilineInput('Enter content: ');
 
         const validation = Utils.verifySchema(
             { title, alias, content },
@@ -153,7 +153,7 @@ export class SnippetCmd {
         }
 
         const newTitle = await Utils.getInput('Enter new title (optional): ');
-        const newContent = await Utils.getInput(
+        const newContent = await Utils.getMultilineInput(
             'Enter new content (optional): '
         );
         const newAlias = await Utils.getInput('Enter new alias (optional): ');

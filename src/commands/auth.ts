@@ -10,7 +10,7 @@ export class AuthCmd {
         }
 
         const email = await Utils.getInput('Enter email: ');
-        const password = await Utils.getInput('Enter password: ');
+        const password = await Utils.getPasswordInput();
 
         const validation = Utils.verifySchema({ email, password }, authSchema);
         if (!validation.success) {
@@ -38,7 +38,7 @@ export class AuthCmd {
         }
 
         const email = await Utils.getInput('Enter email: ');
-        const password = await Utils.getInput('Enter password: ');
+        const password = await Utils.getPasswordInput();
 
         const validation = Utils.verifySchema({ email, password }, authSchema);
         if (!validation.success) {
