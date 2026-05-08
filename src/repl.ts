@@ -38,6 +38,10 @@ export async function start() {
                 await SnippetCmd.delete();
                 break;
 
+            case 'edit':
+                await SnippetCmd.update();
+                break;
+
             case 'quit':
             case 'exit':
                 process.exit(0);

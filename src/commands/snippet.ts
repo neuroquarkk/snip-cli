@@ -1,4 +1,4 @@
-import { aliasSchema, createSnippet } from '@schemas';
+import { aliasSchema, createSnippet, updateSnippet } from '@schemas';
 import { State } from '@state';
 import { ApiService, Utils } from '@utils';
 
@@ -79,8 +79,18 @@ export class SnippetCmd {
             return;
         }
 
+        let query: string = `page=${options.page}&limit=${options.limit}`;
+
+        const search = await Utils.getInput(
+            'Enter search keyword (optional): '
+        );
+
+        if (search) {
+            query += `&search=${search}`;
+        }
+
         const { data, error } = await ApiService.fetch<{ snippets: Snippet[] }>(
-            `snippets?page=${options.page}&limit=${options.limit}`,
+            `snippets?${query}`,
             {
                 headers: { Authorization: `Bearer ${State.getPat()}` },
             }
@@ -127,5 +137,50 @@ export class SnippetCmd {
         }
 
         console.log('Snippet deleted successfully');
+    }
+
+    public static async update() {
+        if (!State.isAuthenticated()) {
+            console.error('You are not authenticated');
+            return;
+        }
+
+        const alias = await Utils.getInput('Enter alias to update: ');
+        const aliasValidation = Utils.verifySchema({ alias }, aliasSchema);
+        if (!aliasValidation.success) {
+            console.error('Validation failed:', aliasValidation.errors);
+            return;
+        }
+
+        const newTitle = await Utils.getInput('Enter new title (optional): ');
+        const newContent = await Utils.getInput(
+            'Enter new content (optional): '
+        );
+        const newAlias = await Utils.getInput('Enter new alias (optional): ');
+
+        const data: any = {};
+
+        if (newTitle) data.title = newTitle;
+        if (newContent) data.content = newContent;
+        if (newAlias) data.alias = newAlias;
+
+        const validation = Utils.verifySchema(data, updateSnippet);
+        if (!validation.success) {
+            console.error('Validation failed:', validation.errors);
+            return;
+        }
+
+        const { error } = await ApiService.fetch(`snippets/${alias}`, {
+            body: validation.data,
+            method: 'PATCH',
+            headers: { Authorization: `Bearer ${State.getPat()}` },
+        });
+
+        if (error) {
+            console.error('Failed to update snippet:', error.message);
+            return;
+        }
+
+        console.log('Snippet updated successfully');
     }
 }
