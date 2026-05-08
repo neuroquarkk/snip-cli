@@ -1,6 +1,6 @@
 import { aliasSchema, createSnippet, updateSnippet } from '@schemas';
 import { State } from '@state';
-import { ApiService, Utils } from '@utils';
+import { ApiService, Utils, ArgParser } from '@utils';
 
 type Snippet = {
     title: string;
@@ -71,20 +71,47 @@ export class SnippetCmd {
         console.log(data.content);
     }
 
-    public static async getAll(
-        options: { page: number; limit: number } = { page: 1, limit: 10 }
-    ) {
+    public static async getAll(args: string[] = []) {
         if (!State.isAuthenticated()) {
             console.error('You are not authenticated');
             return;
         }
 
-        let query: string = `page=${options.page}&limit=${options.limit}`;
+        let page = 1;
+        let limit = 10;
+        let search: string | undefined;
 
-        const search = await Utils.getInput(
-            'Enter search keyword (optional): '
-        );
+        if (args.length > 0) {
+            const parsed = ArgParser.parse(args);
+            if (!parsed.success) {
+                console.error(parsed.message);
+                return;
+            }
 
+            if (parsed.data['page']) {
+                const p = Number(parsed.data['page']);
+                if (isNaN(p) || p < 1) {
+                    console.error('page must be positive number');
+                    return;
+                }
+                page = p;
+            }
+
+            if (parsed.data['limit']) {
+                const l = Number(parsed.data['limit']);
+                if (isNaN(l) || l < 1) {
+                    console.error('limit must be positive number');
+                    return;
+                }
+                limit = l;
+            }
+
+            search = parsed.data['search'];
+        } else {
+            search = await Utils.getInput('Enter search keyword (optional): ');
+        }
+
+        let query: string = `page=${page}&limit=${limit}`;
         if (search) {
             query += `&search=${search}`;
         }

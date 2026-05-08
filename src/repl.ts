@@ -7,9 +7,12 @@ export async function start() {
 
     while (true) {
         const prompt = State.isAuthenticated() ? '[snip]>> ' : '>> ';
-        const cmd = await Utils.getInput(prompt);
+        const input = await Utils.getInput(prompt);
 
-        switch (cmd.toLowerCase()) {
+        const [cmd, ...args] = input.trim().split(/\s+/);
+        if (!cmd) continue;
+
+        switch (cmd.trim().toLowerCase()) {
             case 'register':
                 await AuthCmd.register();
                 break;
@@ -31,7 +34,7 @@ export async function start() {
                 break;
 
             case 'ls':
-                await SnippetCmd.getAll();
+                await SnippetCmd.getAll(args);
                 break;
 
             case 'rm':
