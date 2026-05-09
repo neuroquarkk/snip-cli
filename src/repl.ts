@@ -30,7 +30,7 @@ export async function start() {
                 break;
 
             case 'view':
-                await SnippetCmd.getByAlias();
+                await SnippetCmd.getByAlias(args);
                 break;
 
             case 'ls':
@@ -38,7 +38,7 @@ export async function start() {
                 break;
 
             case 'rm':
-                await SnippetCmd.delete();
+                await SnippetCmd.delete(args);
                 break;
 
             case 'edit':

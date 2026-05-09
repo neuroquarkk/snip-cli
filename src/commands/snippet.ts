@@ -42,13 +42,25 @@ export class SnippetCmd {
         console.log('Snippet created successfully');
     }
 
-    public static async getByAlias() {
+    public static async getByAlias(args: string[]) {
         if (!State.isAuthenticated()) {
             console.error('You are not authenticated');
             return;
         }
 
-        const alias = await Utils.getInput('Enter alias: ');
+        let alias: string | undefined;
+
+        if (args.length > 0) {
+            const parsed = ArgParser.parse(args);
+            if (!parsed.success) {
+                console.error(parsed.message);
+                return;
+            }
+
+            alias = parsed.data['alias'];
+        } else {
+            alias = await Utils.getInput('Enter alias: ');
+        }
 
         const validation = Utils.verifySchema({ alias }, aliasSchema);
         if (!validation.success) {
@@ -139,13 +151,25 @@ export class SnippetCmd {
         });
     }
 
-    public static async delete() {
+    public static async delete(args: string[]) {
         if (!State.isAuthenticated()) {
             console.error('You are not authenticated');
             return;
         }
 
-        const alias = await Utils.getInput('Enter alias: ');
+        let alias: string | undefined;
+
+        if (args.length > 0) {
+            const parsed = ArgParser.parse(args);
+            if (!parsed.success) {
+                console.error(parsed.message);
+                return;
+            }
+
+            alias = parsed.data['alias'];
+        } else {
+            alias = await Utils.getInput('Enter alias: ');
+        }
 
         const validation = Utils.verifySchema({ alias }, aliasSchema);
         if (!validation.success) {
