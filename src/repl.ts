@@ -2,6 +2,32 @@ import { Utils } from '@utils';
 import { AuthCmd, SnippetCmd } from '@commands';
 import { State } from '@state';
 
+function showHelp() {
+    console.log(`
+=== Snip CLI Help Menu ===
+
+Authentication Commands:
+  register    - Create a new account
+  login       - Log in to your account
+  logout      - Log out of the current session
+
+Snippet Commands:
+  touch       - Create a new snippet. Prompts for title, alias and content
+  view        - View a snippet's content
+                Usage: view [alias=<name>]
+  ls          - List snippets with optional pagination and filtering
+                Usage: ls [page=<num>] [limit=<num>] [search=<keyword>]
+  edit        - Update an existing snippet
+                Prompts interactively
+  rm          - Delete a snippet
+                Usage: rm [alias=<name>]
+
+System Commands:
+  help        - Show this help menu
+  quit, exit  - Close the application
+`);
+}
+
 export async function start() {
     await AuthCmd.verify();
 
@@ -45,9 +71,16 @@ export async function start() {
                 await SnippetCmd.update();
                 break;
 
+            case 'help':
+                showHelp();
+                break;
+
             case 'quit':
             case 'exit':
                 process.exit(0);
+
+            default:
+                console.log(`Unknown command: "${cmd}"`);
         }
     }
 }
