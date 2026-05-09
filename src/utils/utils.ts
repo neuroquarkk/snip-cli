@@ -2,10 +2,21 @@ import { createInterface } from 'readline/promises';
 import { stdin as input, stdout as output } from 'process';
 import type { ZodType } from 'zod';
 import password from '@inquirer/password';
+import { CONSTANTS } from '@constants';
 
 export class Utils {
     public static async getInput(msg: string = ''): Promise<string> {
-        const rl = createInterface({ input, output });
+        const rl = createInterface({
+            input,
+            output,
+            completer: function (line) {
+                const input = line.toLowerCase().trim();
+                const hits = CONSTANTS.COMMANDS.filter((c) =>
+                    c.startsWith(input)
+                );
+                return [hits.length ? hits : [], line];
+            },
+        });
         const answer = await rl.question(msg);
         rl.close();
         return answer;
