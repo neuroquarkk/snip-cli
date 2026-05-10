@@ -8,7 +8,7 @@ type Snippet = {
 };
 
 export class SnippetCmd {
-    public static async create() {
+    public static async create(content?: string) {
         if (!State.isAuthenticated()) {
             console.error('You are not authenticated');
             return;
@@ -16,7 +16,10 @@ export class SnippetCmd {
 
         const title = await Utils.getInput('Enter title: ');
         const alias = await Utils.getInput('Enter alias: ');
-        const content = await Utils.getMultilineInput('Enter content: ');
+
+        if (!content) {
+            content = await Utils.getMultilineInput('Enter content: ');
+        }
 
         const validation = Utils.verifySchema(
             { title, alias, content },
