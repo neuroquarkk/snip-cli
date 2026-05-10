@@ -13,6 +13,7 @@
         "typescript": "^5"
     },
     "scripts": {
+        "build": "bun build index.ts --compile --outfile snip",
         "prepare": "husky"
     },
     "lint-staged": {
