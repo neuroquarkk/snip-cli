@@ -21,7 +21,7 @@ async function handleView(alias: string) {
     const { data, error } = await ApiService.fetch<{ content: string }>(
         `snippets/${alias}`,
         {
-            headers: { Authorization: `Bearer: ${State.getPat()}` },
+            headers: { Authorization: `Bearer ${State.getPat()}` },
         }
     );
 

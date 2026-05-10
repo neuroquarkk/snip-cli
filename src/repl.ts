@@ -1,6 +1,8 @@
 import { Utils } from '@utils';
 import { AuthCmd, SnippetCmd } from '@commands';
 import { State } from '@state';
+import type { Completer } from 'readline/promises';
+import { CONSTANTS } from '@constants';
 
 function showHelp() {
     console.log(`
@@ -28,12 +30,20 @@ System Commands:
 `);
 }
 
+const replCompleter: Completer = (line) => {
+    const hits = CONSTANTS.COMMANDS.filter((c) =>
+        c.startsWith(line.toLowerCase().trim())
+    );
+
+    return [hits.length ? hits : [], line];
+};
+
 export async function start() {
     await AuthCmd.verify();
 
     while (true) {
         const prompt = State.isAuthenticated() ? '[snip]>> ' : '>> ';
-        const input = await Utils.getInput(prompt);
+        const input = await Utils.getInput(prompt, replCompleter);
 
         const [cmd, ...args] = input.trim().split(/\s+/);
         if (!cmd) continue;

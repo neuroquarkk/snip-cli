@@ -139,7 +139,7 @@ export class SnippetCmd {
         );
 
         if (error) {
-            console.error('Falied to fetch snippets:', error.message);
+            console.error('Failed to fetch snippets:', error.message);
             return;
         }
 
@@ -186,7 +186,7 @@ export class SnippetCmd {
         });
 
         if (error) {
-            console.error('Falied to delete snippet:', error.message);
+            console.error('Failed to delete snippet:', error.message);
             return;
         }
 
@@ -207,16 +207,26 @@ export class SnippetCmd {
         }
 
         const newTitle = await Utils.getInput('Enter new title (optional): ');
-        const newContent = await Utils.getMultilineInput(
-            'Enter new content (optional): '
-        );
         const newAlias = await Utils.getInput('Enter new alias (optional): ');
 
-        const data: any = {};
+        let newContent: string | undefined;
 
-        if (newTitle) data.title = newTitle;
-        if (newContent) data.content = newContent;
-        if (newAlias) data.alias = newAlias;
+        const editContent = await Utils.getInput('Update content? (y/n): ');
+        if (editContent.trim().toLowerCase() === 'y') {
+            newContent = await Utils.getMultilineInput(
+                'Enter new content (optional): '
+            );
+        }
+
+        const data: Record<string, string> = {};
+        if (newTitle) data['title'] = newTitle;
+        if (newContent) data['content'] = newContent;
+        if (newAlias) data['alias'] = newAlias;
+
+        if (Object.keys(data).length === 0) {
+            console.log('No content to update');
+            return;
+        }
 
         const validation = Utils.verifySchema(data, updateSnippet);
         if (!validation.success) {

@@ -78,6 +78,7 @@ export class AuthCmd {
         if (error) {
             if (error.message === 'Network error') {
                 console.log('Server offline');
+                State.setPat(storedPat);
                 return;
             }
 
