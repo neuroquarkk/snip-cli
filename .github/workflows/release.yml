@@ -1,0 +1,40 @@
+name: Release
+
+on:
+    push:
+        tags:
+            - 'v*'
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+            - uses: oven-sh/setup-bun@v2
+
+            - run: bun install
+
+            - run: |
+                  bun build index.ts --compile --target bun-linux-x64    --outfile dist/snip-linux-x64
+                  bun build index.ts --compile --target bun-darwin-x64   --outfile dist/snip-darwin-x64
+                  bun build index.ts --compile --target bun-darwin-arm64 --outfile dist/snip-darwin-arm64
+                  bun build index.ts --compile --target bun-windows-x64  --outfile dist/snip-win-x64.exe
+
+              env:
+                  BASE_URL: ${{ secrets.BASE_URL }}
+
+            - name: Package binaries
+              run: |
+                  tar -czf dist/snip-linux-x64.tar.gz    -C dist snip-linux-x64
+                  tar -czf dist/snip-darwin-x64.tar.gz   -C dist snip-darwin-x64
+                  tar -czf dist/snip-darwin-arm64.tar.gz -C dist snip-darwin-arm64
+                  zip -j   dist/snip-win-x64.zip            dist/snip-win-x64.exe
+
+            - name: Create Release
+              uses: softprops/action-gh-release@v3
+              with:
+                  files: |
+                      dist/snip-linux-x64.tar.gz
+                      dist/snip-darwin-x64.tar.gz
+                      dist/snip-darwin-arm64.tar.gz
+                      dist/snip-win-x64.zip
