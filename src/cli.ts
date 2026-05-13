@@ -33,6 +33,15 @@ async function handleView(alias: string) {
     console.log(data.content);
 }
 
+function handleHelp() {
+    console.log(`
+Available Commands:
+    touch <filename>      Create or interact with a file by its filename
+    view <alias>          View the details or contents associated with an alias
+    help                  Display this help message
+`);
+}
+
 export async function handleArg(args: string[]) {
     await AuthCmd.verify();
     const cmd = args[0]?.trim().toLowerCase();
@@ -51,6 +60,8 @@ export async function handleArg(args: string[]) {
             return;
         }
         await handleView(alias);
+    } else if (cmd === 'help') {
+        handleHelp();
     } else {
         console.error(`Invalid argument: "${args[0]}"`);
     }
